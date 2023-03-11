@@ -60,7 +60,8 @@ class TextAudioLoader(torch.utils.data.Dataset):
         audiopath, text = audiopath_and_text[0], audiopath_and_text[1]
         text = self.get_text(text)
         spec, wav = self.get_audio(audiopath)
-        return (text, spec, wav)
+        emo = torch.FloatTensor(np.load(audiopath+".emo.npy"))
+        return (text, spec, wav, emo)
 
     def get_audio(self, filename):
         audio, sampling_rate = load_wav_to_torch(filename)
@@ -71,14 +72,7 @@ class TextAudioLoader(torch.utils.data.Dataset):
         audio_norm = audio_norm.unsqueeze(0)
         spec_filename = filename.replace(".wav", ".spec.pt")
         if os.path.exists(spec_filename):
-            try:
-                spec = torch.load(spec_filename)
-            except:
-                spec = spectrogram_torch(audio_norm, self.filter_length,
-                self.sampling_rate, self.hop_length, self.win_length,
-                center=False)
-                spec = torch.squeeze(spec, 0)
-                torch.save(spec, spec_filename)
+            spec = torch.load(spec_filename)
         else:
             spec = spectrogram_torch(audio_norm, self.filter_length,
                 self.sampling_rate, self.hop_length, self.win_length,
@@ -132,9 +126,13 @@ class TextAudioCollate():
         text_padded = torch.LongTensor(len(batch), max_text_len)
         spec_padded = torch.FloatTensor(len(batch), batch[0][1].size(0), max_spec_len)
         wav_padded = torch.FloatTensor(len(batch), 1, max_wav_len)
+        emo = torch.FloatTensor(len(batch), 1024)
+
         text_padded.zero_()
         spec_padded.zero_()
         wav_padded.zero_()
+        emo.zero_()
+
         for i in range(len(ids_sorted_decreasing)):
             row = batch[ids_sorted_decreasing[i]]
 
@@ -150,9 +148,11 @@ class TextAudioCollate():
             wav_padded[i, :, :wav.size(1)] = wav
             wav_lengths[i] = wav.size(1)
 
+            emo[:] = row[3]
+
         if self.return_ids:
             return text_padded, text_lengths, spec_padded, spec_lengths, wav_padded, wav_lengths, ids_sorted_decreasing
-        return text_padded, text_lengths, spec_padded, spec_lengths, wav_padded, wav_lengths
+        return text_padded, text_lengths, spec_padded, spec_lengths, wav_padded, wav_lengths, emo
 
 
 """Multi speaker version"""
@@ -205,7 +205,8 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         text = self.get_text(text)
         spec, wav = self.get_audio(audiopath)
         sid = self.get_sid(sid)
-        return (text, spec, wav, sid)
+        emo = torch.FloatTensor(np.load(audiopath+".emo.npy"))
+        return (text, spec, wav, sid, emo)
 
     def get_audio(self, filename):
         audio, sampling_rate = load_wav_to_torch(filename)
@@ -275,9 +276,13 @@ class TextAudioSpeakerCollate():
         text_padded = torch.LongTensor(len(batch), max_text_len)
         spec_padded = torch.FloatTensor(len(batch), batch[0][1].size(0), max_spec_len)
         wav_padded = torch.FloatTensor(len(batch), 1, max_wav_len)
+        emo = torch.FloatTensor(len(batch), 1024)
+
         text_padded.zero_()
         spec_padded.zero_()
         wav_padded.zero_()
+        emo.zero_()
+
         for i in range(len(ids_sorted_decreasing)):
             row = batch[ids_sorted_decreasing[i]]
 
@@ -295,9 +300,11 @@ class TextAudioSpeakerCollate():
 
             sid[i] = row[3]
 
+            emo[i, :] = row[4]
+
         if self.return_ids:
             return text_padded, text_lengths, spec_padded, spec_lengths, wav_padded, wav_lengths, sid, ids_sorted_decreasing
-        return text_padded, text_lengths, spec_padded, spec_lengths, wav_padded, wav_lengths, sid
+        return text_padded, text_lengths, spec_padded, spec_lengths, wav_padded, wav_lengths, sid, emo
 
 
 class DistributedBucketSampler(torch.utils.data.distributed.DistributedSampler):
