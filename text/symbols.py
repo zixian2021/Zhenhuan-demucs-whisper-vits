@@ -1,24 +1,69 @@
-""" from https://github.com/keithito/tacotron """
-
 '''
 Defines the set of symbols used in text input to the model.
 '''
+
 _pad        = '_'
-_punctuation = ';:,.!?¡¿—…"«»“” '
+_punctuation = ',.!?-'
+_letters = 'AEINOQUabdefghijkmnoprstuvwyzʃʧ↓↑ '
 
-_punctuation_zh = '；：，。！？-“”《》、（）ＢＰ…— '
-_letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+'''
+# japanese_cleaners2
+_pad        = '_'
+_punctuation = ',.!?-~…'
+_letters = 'AEINOQUabdefghijkmnoprstuvwyzʃʧʦ↓↑ '
+'''
 
-_numbers = '123450'
-_others = ''
+'''# korean_cleaners
+_pad        = '_'
+_punctuation = ',.!?…~'
+_letters = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉㅏㅓㅗㅜㅡㅣㅐㅔ '
+'''
 
-_letters_ipa = "ɑɐɒæɓʙβɔɕçɗɖðʤəɘɚɛɜɝɞɟʄɡɠɢʛɦɧħɥʜɨɪʝɭɬɫɮʟɱɯɰŋɳɲɴøɵɸθœɶʘɹɺɾɻʀʁɽʂʃʈʧʉʊʋⱱʌɣɤʍχʎʏʑʐʒʔʡʕʢǀǁǂǃˈˌːˑʼʴʰʱʲʷˠˤ˞↓↑→↗↘'̩'ᵻ"
+'''# chinese_cleaners
+_pad        = '_'
+_punctuation = '，。！？—…'
+_letters = 'ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦㄧㄨㄩˉˊˇˋ˙ '
+'''
 
+
+'''# sanskrit_cleaners
+_pad        = '_'
+_punctuation = '।'
+_letters = 'ँंःअआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलळवशषसहऽािीुूृॄेैोौ्ॠॢ '
+'''
+
+'''# cjks_cleaners
+_pad        = '_'
+_punctuation = ',.!?-~…'
+_letters = 'NQabdefghijklmnopstuvwxyzʃʧʥʦɯɹəɥçɸɾβŋɦː⁼ʰ`^#*=→↓↑ '
+'''
+
+'''# thai_cleaners
+_pad        = '_'
+_punctuation = '.!? '
+_letters = 'กขฃคฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤลวศษสหฬอฮฯะัาำิีึืุูเแโใไๅๆ็่้๊๋์'
+'''
+
+'''# cjke_cleaners2
+_pad        = '_'
+_punctuation = ',.!?-~…'
+_letters = 'NQabdefghijklmnopstuvwxyzɑæʃʑçɯɪɔɛɹðəɫɥɸʊɾʒθβŋɦ⁼ʰ`^#*=ˈˌ→↓↑ '
+'''
+
+'''# shanghainese_cleaners
+_pad        = '_'
+_punctuation = ',.!?…'
+_letters = 'abdfghiklmnopstuvyzøŋȵɑɔɕəɤɦɪɿʑʔʰ̩̃ᴀᴇ15678 '
+'''
+
+'''# chinese_dialect_cleaners
+_pad        = '_'
+_punctuation = ',.!?~…─'
+_letters = '#Nabdefghijklmnoprstuvwxyzæçøŋœȵɐɑɒɓɔɕɗɘəɚɛɜɣɤɦɪɭɯɵɷɸɻɾɿʂʅʊʋʌʏʑʔʦʮʰʷˀː˥˦˧˨˩̥̩̃̚αᴀᴇ↑↓∅ⱼ '
+'''
 
 # Export all symbols:
-symbols = [_pad] + list(_punctuation) + list(_letters) + list(_letters_ipa)
-
-symbols_zh = [_pad] + list(_punctuation_zh) +  list(_letters) + list(_numbers)
+symbols = [_pad] + list(_punctuation) + list(_letters)
 
 # Special symbol ids
 SPACE_ID = symbols.index(" ")
