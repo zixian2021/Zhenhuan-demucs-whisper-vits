@@ -125,7 +125,7 @@ def transcribe(
     time_precision = (
         input_stride * HOP_LENGTH / SAMPLE_RATE
     )  # time per output token: 0.02 (seconds)
-    all_tokens = []
+    all_tokens = ['以下是普通话的句子。']
     all_segments = []
     prompt_reset_since = 0
 
